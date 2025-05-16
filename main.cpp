@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int recurse(vector<int> arr, int l, int r);
+int recurse(vector<int>& arr, int l, int r);
 
 
 int main()
@@ -12,16 +12,24 @@ int main()
     // given a main user and secondary user's preferences, return the number of inversions (conflicts)
     // conflict - ai, ak, i < k in user1, but it is ak, ai in user2
 
-    vector<int> u1 = {1, 2, 3, 4, 5, 6}; // always sorted
+    vector<int> u1 = {1, 2, 3, 4, 5, 6}; // first always sorted
+
     vector<int> u2 = {3, 2, 6, 1, 4, 5};
     // (ans) # of inversions: 2+1+3 = 6
 
-    cout << "Number of inversions: " << recurse(u2, 0, u2.size() - 1);
+    vector<int> u3 = {1, 4, 3, 6, 2, 5};  // should be 5 inversions
+
+
+    int inversions = recurse(u2, 0, u2.size() - 1);
+    int inversions2 = recurse(u3, 0, u3.size() -1);
+    cout << "Number of user2's inversions: " << inversions << endl;
+    cout << "Number of user3's inversions: " << inversions2 << endl;
+    
 
     return 0;
 }
 
-int recurse(vector<int> arr, int l, int r)
+int recurse(vector<int>& arr, int l, int r)
 {
     if (l == r)
     {
@@ -69,28 +77,31 @@ int recurse(vector<int> arr, int l, int r)
             combined.push_back(arr[j]);
             j++;
             // inversion
-            middle_inversions++;
+            middle_inversions += m-i +1; // how many elems are in left half
+            // if arr[i] > arr[j]
+            // all items right of arr[i] will also be in inversion since sorted
         }
     }
+
     // stitch remaining
-    if (i < m) {
+    if (i <= m) {
         for (int d = i; d < m+1; ++d) {
-            combined.push_back(combined[d]);
+            combined.push_back(arr[d]);
         }
     }
-    else if (j < r) {
+    else if (j <= r) {
         for (int d = j; d < r+1; ++d) {
-            combined.push_back(combined[d]);
+            combined.push_back(arr[d]);
         }
     }
 
     // make arr sorted using combined
     int t = 0;
-    if (combined.size() != r-l) {
+    if (combined.size() != r-l +1) {
         cout << "combined arr size is not the length of r-l" << endl;
         return -1;
     }
-    for (int z = l; z < r; ++z) {
+    for (int z = l; z <= r; ++z) {
         arr[z] = combined[t];
         t++; 
     }
